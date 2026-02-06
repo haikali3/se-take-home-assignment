@@ -25,7 +25,13 @@ type Controller struct {
 	logs     []string
 }
 
-func controller() {
+func NewController(startID int) *Controller {
+	return &Controller{
+		pending:     []Order{},
+		complete:    []Order{},
+		bots:        []Bot{},
+		nextOrderID: startID,
+	}
 }
 
 func (c *Controller) CreateNormalOrder() Order {
