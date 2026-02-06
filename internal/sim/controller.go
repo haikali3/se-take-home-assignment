@@ -59,7 +59,7 @@ func (c *Controller) CreateVIPOrder() Order {
 	}
 
 	// append order to pending
-	c.pending = append(c.pending, order)
+	c.pending = append(c.pending, Order{})
 
 	// shift right
 	copy(c.pending[i+1:], c.pending[i:])
