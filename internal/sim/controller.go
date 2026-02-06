@@ -29,24 +29,37 @@ func controller() {
 }
 
 func (c *Controller) CreateNormalOrder() Order {
-	// read current nextOrderId as new order ID
 	order := Order{
 		ID:    c.nextOrderID,
 		IsVIP: false,
 	}
-	// build normal order (vip: valse)
-	// increment nextOrderId
 	c.nextOrderID++
-	// append order to pending
-
 	c.pending = append(c.pending, order)
 
-	// return created order
 	return order
 }
 
-func CreateVIPOrder() {
+func (c *Controller) CreateVIPOrder() Order {
+	order := Order{
+		ID:    c.nextOrderID,
+		IsVIP: true,
+	}
+	// increment nextOrderId
+	c.nextOrderID++
 
+	i := 0
+	for i < len(c.pending) && c.pending[i].IsVIP {
+		i++
+	}
+
+	// append order to pending
+	c.pending = append(c.pending, order)
+
+	// shift right
+	copy(c.pending[i+1:], c.pending[i:])
+	c.pending[i] = order //place vip
+
+	return order
 }
 
 // add small getter (for testing)
