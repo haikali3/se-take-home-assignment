@@ -63,8 +63,12 @@ func (c *Controller) CreateVIPOrder() Order {
 }
 
 // add small getter (for testing)
-func PendingOrders() {
+func (c *Controller) PendingOrders() []Order {
+	out := make([]Order, len(c.pending))
+	copy(out, c.pending)
+	return out
 }
 
-func NextOrderID() {
+func (c *Controller) NextOrderID() int {
+	return c.nextOrderID
 }
