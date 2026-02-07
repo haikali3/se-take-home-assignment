@@ -1,12 +1,10 @@
 package sim
 
 import (
-	"se-take-home-assignment/common"
 	"testing"
 )
 
 func TestOrderIDIncreasing(t *testing.T) {
-	common.InitLogging()
 
 	c := NewController(1001)
 
