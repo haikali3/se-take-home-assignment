@@ -3,8 +3,9 @@ package sim
 import "time"
 
 type Order struct {
-	ID    int
-	IsVIP bool
+	ID     int
+	IsVIP  bool
+	Status string
 }
 
 type Bot struct {
@@ -32,6 +33,7 @@ func NewController(startID int) *Controller {
 		complete:    []Order{},
 		bots:        []Bot{},
 		nextOrderID: startID,
+		nextBotID:   1,
 		now:         time.Now(),
 		processTime: 10 * time.Second,
 		timeStep:    1 * time.Second,
@@ -44,8 +46,9 @@ func (c *Controller) Now() time.Time {
 
 func (c *Controller) CreateNormalOrder() Order {
 	order := Order{
-		ID:    c.nextOrderID,
-		IsVIP: false,
+		ID:     c.nextOrderID,
+		IsVIP:  false,
+		Status: "PENDING",
 	}
 	c.nextOrderID++
 	c.pending = append(c.pending, order)
@@ -55,8 +58,9 @@ func (c *Controller) CreateNormalOrder() Order {
 
 func (c *Controller) CreateVIPOrder() Order {
 	order := Order{
-		ID:    c.nextOrderID,
-		IsVIP: true,
+		ID:     c.nextOrderID,
+		IsVIP:  true,
+		Status: "PENDING",
 	}
 	// increment nextOrderId
 	c.nextOrderID++

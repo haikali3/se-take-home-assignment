@@ -20,8 +20,15 @@ func InitLogging() {
 	} else {
 		// Pretty console output for development
 		log.Logger = zerolog.New(zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			TimeFormat: "15:04:05.000",
+			Out:         os.Stdout,
+			TimeFormat:  "15:04:05",
+			NoColor:     true,
+			FormatLevel: func(i any) string { return "" },
+			FormatTimestamp: func(i any) string {
+				t, _ := time.Parse(time.RFC3339, fmt.Sprintf("%s", i))
+				return fmt.Sprintf("[%s]", t.Format("15:04:05"))
+			},
+			FormatCaller: func(i any) string { return "" },
 		}).With().Timestamp().Logger()
 	}
 

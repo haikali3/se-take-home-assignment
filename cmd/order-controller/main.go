@@ -26,11 +26,13 @@ func main() {
 	c := sim.NewController(1001)
 
 	order1 := c.CreateNormalOrder()
-	log.Info().Msgf("Created Normal Order #%d - Status: PENDING", order1.ID)
+	log.Info().Msgf("Created Normal Order #%d - Status: %s", order1.ID, order1.Status)
 	order2 := c.CreateVIPOrder()
-	log.Info().Msgf("Created VIP Order #%d - Status: PENDING", order2.ID)
-	order3 := c.CreateVIPOrder()
+	log.Info().Msgf("Created VIP Order #%d - Status: %s", order2.ID, order2.Status)
+	order3 := c.CreateNormalOrder()
 	c.CreateNormalOrder()
-	log.Info().Msgf("Created Normal Order #%d - Status: PENDING", order3.ID)
+	log.Info().Msgf("Created Normal Order #%d - Status: %s", order3.ID, order3.Status)
 
+	bot1 := c.AddBot()
+	log.Info().Msgf("Bot #%d created - Status: %s", bot1.ID, bot1.Current.Status)
 }

@@ -10,6 +10,7 @@ func (c *Controller) AddBot() Bot {
 	if len(c.pending) > 0 {
 		order := c.pending[0]
 		c.pending = c.pending[1:] // [1:] the slice drop the first element
+		order.Status = "PROCESSING"
 		bot.Current = &order
 		bot.BusyEnd = c.now.Add(c.processTime)
 	}
@@ -42,6 +43,7 @@ func (c *Controller) Tick() {
 		bot := &c.bots[i]
 		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
 			// order is complete
+			bot.Current.Status = "COMPLETE"
 			c.complete = append(c.complete, *bot.Current)
 			bot.Current = nil
 		}
@@ -53,6 +55,7 @@ func (c *Controller) Tick() {
 		if bot.Current == nil && len(c.pending) > 0 { // if bot has no order and order pending more than 0
 			order := c.pending[0]     // get first pending order
 			c.pending = c.pending[1:] // and remove the first slice of array
+			order.Status = "PROCESSING"
 			bot.Current = &order
 			bot.BusyEnd = c.now.Add(c.processTime)
 		}
