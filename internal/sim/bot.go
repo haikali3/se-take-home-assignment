@@ -35,6 +35,30 @@ func (c *Controller) RemoveBot() {
 	}
 }
 
-func Tick() {
+// simulation clock by one time step
+func (c *Controller) Tick() {
+	// 1. complete finish orders - check every bot
+	for i := range c.bots {
+		bot := &c.bots[i]
+		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
+			// order is complete
+			c.complete = append(c.complete, *bot.Current)
+			bot.Current = nil
+		}
+	}
+
+	// 2. assign pending orders to idle bots
+	for idleBot := range c.bots {
+		bot := &c.bots[idleBot]
+		if bot.Current == nil && len(c.pending) > 0 { // if bot has no order and order pending more than 0
+			order := c.pending[0]     // get first pending order
+			c.pending = c.pending[1:] // and remove the first slice of array
+			bot.Current = &order
+			bot.BusyEnd = c.now.Add(c.processTime)
+		}
+	}
+
+	// 3. advance simulation time
+	c.now = c.now.Add(c.timeStep)
 
 }

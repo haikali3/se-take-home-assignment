@@ -15,6 +15,7 @@ type Bot struct {
 
 type Controller struct {
 	now         time.Time
+	timeStep    time.Duration
 	processTime time.Duration
 	nextOrderID int
 	nextBotID   int
