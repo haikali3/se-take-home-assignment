@@ -25,14 +25,18 @@ func main() {
 	log.Info().Msgf("System initialized with 0 bots")
 	c := sim.NewController(1001)
 
-	order1 := c.CreateNormalOrder()
-	log.Info().Msgf("Created Normal Order #%d - Status: %s", order1.ID, order1.Status)
-	order2 := c.CreateVIPOrder()
-	log.Info().Msgf("Created VIP Order #%d - Status: %s", order2.ID, order2.Status)
-	order3 := c.CreateNormalOrder()
 	c.CreateNormalOrder()
-	log.Info().Msgf("Created Normal Order #%d - Status: %s", order3.ID, order3.Status)
+	c.CreateVIPOrder()
+	c.CreateNormalOrder()
+	c.CreateNormalOrder()
 
-	bot1 := c.AddBot()
-	log.Info().Msgf("Bot #%d created - Status: %s", bot1.ID, bot1.Current.Status)
+	c.AddBot() // Bot #1 picks up VIP # 1002
+	c.AddBot() // Bot #2 picks up VIP # 1001
+
+	// run sim
+	for i := 0; i < 25; i++ {
+		c.Tick()
+	}
+
+	c.RemoveBot()
 }

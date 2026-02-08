@@ -1,5 +1,7 @@
 package sim
 
+import "github.com/rs/zerolog/log"
+
 func (c *Controller) AddBot() Bot {
 	// create bot with next ID
 	bot := Bot{
@@ -16,6 +18,11 @@ func (c *Controller) AddBot() Bot {
 	}
 
 	c.bots = append(c.bots, bot)
+	log.Info().Msgf("Bot #%d created - Status: ACTIVE", bot.ID)
+	if bot.Current != nil {
+		log.Info().Msgf("Bot #%d picked up Order #%d - Status: %s", bot.ID, bot.Current.ID, bot.Current.Status)
+	}
+
 	return bot
 }
 
@@ -28,6 +35,7 @@ func (c *Controller) RemoveBot() {
 	// remove the newest bot on last position
 	newestBot := c.bots[len(c.bots)-1]
 	c.bots = c.bots[:len(c.bots)-1]
+	log.Info().Msgf("Bot #%d destroyed", newestBot.ID)
 
 	// if the bot is processing an order, put it back to pending
 	if newestBot.Current != nil {
@@ -44,6 +52,7 @@ func (c *Controller) Tick() {
 		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
 			// order is complete
 			bot.Current.Status = "COMPLETE"
+			log.Info().Msgf("Bot #%d completed Order #%d - Status: %s", bot.ID, bot.Current.ID, bot.Current.Status)
 			c.complete = append(c.complete, *bot.Current)
 			bot.Current = nil
 		}
@@ -58,6 +67,13 @@ func (c *Controller) Tick() {
 			order.Status = "PROCESSING"
 			bot.Current = &order
 			bot.BusyEnd = c.now.Add(c.processTime)
+			log.Info().Msgf("Bot #%d picked up Order #%d - Status: %s", bot.ID, order.ID, order.Status)
+		}
+	}
+	for i := range c.bots {
+		bot := &c.bots[i]
+		if bot.Current == nil {
+			log.Info().Msgf("Bot #%d is now IDLE - No pending orders", bot.ID)
 		}
 	}
 

@@ -1,6 +1,10 @@
 package sim
 
-import "time"
+import (
+	"time"
+
+	"github.com/rs/zerolog/log"
+)
 
 type Order struct {
 	ID     int
@@ -52,6 +56,7 @@ func (c *Controller) CreateNormalOrder() Order {
 	}
 	c.nextOrderID++
 	c.pending = append(c.pending, order)
+	log.Info().Msgf("Created Normal Order #%d - Status: %s", order.ID, order.Status)
 
 	return order
 }
@@ -77,6 +82,7 @@ func (c *Controller) CreateVIPOrder() Order {
 	copy(c.pending[i+1:], c.pending[i:])
 	c.pending[i] = order //place vip
 
+	log.Info().Msgf("Created VIP Order #%d - Status: %s", order.ID, order.Status)
 	return order
 }
 
