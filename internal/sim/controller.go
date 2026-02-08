@@ -32,6 +32,9 @@ func NewController(startID int) *Controller {
 		complete:    []Order{},
 		bots:        []Bot{},
 		nextOrderID: startID,
+		now:         time.Now(),
+		processTime: 10 * time.Second,
+		timeStep:    1 * time.Second,
 	}
 }
 

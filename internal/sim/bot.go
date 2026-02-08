@@ -60,5 +60,4 @@ func (c *Controller) Tick() {
 
 	// 3. advance simulation time
 	c.now = c.now.Add(c.timeStep)
-
 }

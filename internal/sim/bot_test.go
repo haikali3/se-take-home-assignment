@@ -76,3 +76,14 @@ func TestMultipleBotsTest(t *testing.T) {
 		t.Errorf("should have pending orders")
 	}
 }
+
+func TestTickCompletesOrder(t *testing.T) {
+	c := NewController(1001)
+	bot := c.AddBot()
+
+}
+func TestTickIdleBotPicksUpOrder(t *testing.T) {
+}
+
+func TestRemoveBotReturnsOrderToPending(t *testing.T) {
+}
