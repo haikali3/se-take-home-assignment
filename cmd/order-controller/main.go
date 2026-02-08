@@ -31,17 +31,23 @@ func main() {
 	c.CreateNormalOrder() // Order #1001
 	c.CreateVIPOrder()    // Order #1002
 	c.CreateNormalOrder() // Order #1003
-	c.CreateNormalOrder() // Order #1004
 
 	c.AddBot() // Bot #1 picks up VIP # 1002
 	c.AddBot() // Bot #2 picks up VIP # 1001
 
 	// run sim
-	for range 25 {
+	for range 11 {
+		c.Tick()
+	}
+
+	c.CreateVIPOrder() // Order #1004 - idle Bot #2 should pick it up on next tick
+
+	for range 14 {
 		c.Tick()
 	}
 
 	c.RemoveBot()
+
 	completed := c.CompleteOrder()
 	vipCount := 0
 	for _, o := range completed {
