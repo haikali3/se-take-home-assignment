@@ -47,6 +47,7 @@ func (c *Controller) RemoveBot() {
 // simulation clock by one time step
 func (c *Controller) Tick() {
 	// 1. complete finish orders - check every bot
+	justFinished := map[int]bool{}
 	for i := range c.bots {
 		bot := &c.bots[i]
 		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
@@ -55,6 +56,7 @@ func (c *Controller) Tick() {
 			log.Info().Msgf("Bot #%d completed Order #%d - Status: %s", bot.ID, bot.Current.ID, bot.Current.Status)
 			c.complete = append(c.complete, *bot.Current)
 			bot.Current = nil
+			justFinished[bot.ID] = true
 		}
 	}
 
@@ -68,15 +70,14 @@ func (c *Controller) Tick() {
 			bot.Current = &order
 			bot.BusyEnd = c.now.Add(c.processTime)
 			log.Info().Msgf("Bot #%d picked up Order #%d - Status: %s", bot.ID, order.ID, order.Status)
+			delete(justFinished, bot.ID) // bot got work, not idle
 		}
 	}
-	for i := range c.bots {
-		bot := &c.bots[i]
-		if bot.Current == nil {
-			log.Info().Msgf("Bot #%d is now IDLE - No pending orders", bot.ID)
-		}
+	// 3. only log IDLE for bots that just finished but got no new order
+	for id := range justFinished {
+		log.Info().Msgf("Bot #%d is now IDLE - No pending orders", id)
 	}
 
-	// 3. advance simulation time
+	// 4. advance simulation time
 	c.now = c.now.Add(c.timeStep)
 }

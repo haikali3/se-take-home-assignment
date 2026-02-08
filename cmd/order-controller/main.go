@@ -25,16 +25,16 @@ func main() {
 	log.Info().Msgf("System initialized with 0 bots")
 	c := sim.NewController(1001)
 
-	c.CreateNormalOrder()
-	c.CreateVIPOrder()
-	c.CreateNormalOrder()
-	c.CreateNormalOrder()
+	c.CreateNormalOrder() // Order #1001
+	c.CreateVIPOrder()    // Order #1002
+	c.CreateNormalOrder() // Order #1003
+	c.CreateNormalOrder() // Order #1004
 
 	c.AddBot() // Bot #1 picks up VIP # 1002
 	c.AddBot() // Bot #2 picks up VIP # 1001
 
 	// run sim
-	for i := 0; i < 25; i++ {
+	for range 25 {
 		c.Tick()
 	}
 
