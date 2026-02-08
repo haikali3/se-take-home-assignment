@@ -56,7 +56,7 @@ func (c *Controller) CreateNormalOrder() Order {
 	}
 	c.nextOrderID++
 	c.pending = append(c.pending, order)
-	log.Info().Msgf("Created Normal Order #%d - Status: %s", order.ID, order.Status)
+	log.Info().Msgf("Created %s Order #%d - Status: %s", order.OrderType(), order.ID, order.Status)
 
 	return order
 }
@@ -82,7 +82,7 @@ func (c *Controller) CreateVIPOrder() Order {
 	copy(c.pending[i+1:], c.pending[i:])
 	c.pending[i] = order //place vip
 
-	log.Info().Msgf("Created VIP Order #%d - Status: %s", order.ID, order.Status)
+	log.Info().Msgf("Created %s Order #%d - Status: %s", order.OrderType(), order.ID, order.Status)
 	return order
 }
 
@@ -101,4 +101,11 @@ func (c *Controller) CompleteOrder() []Order {
 	out := make([]Order, len(c.complete))
 	copy(out, c.complete)
 	return out
+}
+
+func (o Order) OrderType() string {
+	if o.IsVIP {
+		return "VIP"
+	}
+	return "Normal"
 }

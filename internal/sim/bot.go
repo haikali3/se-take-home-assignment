@@ -20,7 +20,7 @@ func (c *Controller) AddBot() Bot {
 	c.bots = append(c.bots, bot)
 	log.Info().Msgf("Bot #%d created - Status: ACTIVE", bot.ID)
 	if bot.Current != nil {
-		log.Info().Msgf("Bot #%d picked up Order #%d - Status: %s", bot.ID, bot.Current.ID, bot.Current.Status)
+		log.Info().Msgf("Bot #%d picked up %s Order #%d - Status: %s", bot.ID, bot.Current.OrderType(), bot.Current.ID, bot.Current.Status)
 	}
 
 	return bot
@@ -53,7 +53,7 @@ func (c *Controller) Tick() {
 		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
 			// order is complete
 			bot.Current.Status = "COMPLETE"
-			log.Info().Msgf("Bot #%d completed Order #%d - Status: %s", bot.ID, bot.Current.ID, bot.Current.Status)
+			log.Info().Msgf("Bot #%d completed %s Order #%d - Status: %s", bot.ID, bot.Current.OrderType(), bot.Current.ID, bot.Current.Status)
 			c.complete = append(c.complete, *bot.Current)
 			bot.Current = nil
 			justFinished[bot.ID] = true
@@ -69,7 +69,7 @@ func (c *Controller) Tick() {
 			order.Status = "PROCESSING"
 			bot.Current = &order
 			bot.BusyEnd = c.now.Add(c.processTime)
-			log.Info().Msgf("Bot #%d picked up Order #%d - Status: %s", bot.ID, order.ID, order.Status)
+			log.Info().Msgf("Bot #%d picked up %s Order #%d - Status: %s", bot.ID, bot.Current.OrderType(), order.ID, order.Status)
 			delete(justFinished, bot.ID) // bot got work, not idle
 		}
 	}
