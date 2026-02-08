@@ -115,10 +115,32 @@ func TestTickIdleBotPicksUpOrder(t *testing.T) {
 
 	if c.bots[0].Current == nil {
 		t.Error("bot should have picked up the second order")
-	} else if c.bots[0].Current.ID == secondOrder.ID {
+	} else if c.bots[0].Current.ID != secondOrder.ID {
 		t.Errorf("expected bot to pick up order %d, got %d", secondOrder.ID, c.bots[0].Current.ID)
 	}
 }
 
 func TestRemoveBotReturnsOrderToPending(t *testing.T) {
+	c := NewController(1001)
+	firstOrder := c.CreateNormalOrder() // ID 1001
+	bot := c.AddBot()
+
+	if bot.Current.ID != firstOrder.ID {
+		t.Errorf("bot should have picked up the first order but got %d", bot.Current.ID)
+	}
+
+	c.RemoveBot()
+
+	if len(c.PendingOrders()) != 1 {
+		t.Errorf("expected 1 pending order, got %d", len(c.PendingOrders()))
+	}
+
+	if c.PendingOrders()[0].ID != firstOrder.ID {
+		t.Errorf("expected pending order %d, got %d", firstOrder.ID, c.PendingOrders()[0].ID)
+	}
+
+	if len(c.bots) != 0 {
+		t.Errorf("expected 0 bots, got %d", len(c.bots))
+	}
+
 }
