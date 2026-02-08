@@ -38,6 +38,10 @@ func NewController(startID int) *Controller {
 	}
 }
 
+func (c *Controller) Now() time.Time {
+	return c.now
+}
+
 func (c *Controller) CreateNormalOrder() Order {
 	order := Order{
 		ID:    c.nextOrderID,

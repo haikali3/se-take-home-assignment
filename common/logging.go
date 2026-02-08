@@ -20,9 +20,9 @@ func InitLogging() {
 	} else {
 		// Pretty console output for development
 		log.Logger = zerolog.New(zerolog.ConsoleWriter{
-			Out:        os.Stderr,
+			Out:        os.Stdout,
 			TimeFormat: "15:04:05.000",
-		}).With().Timestamp().Caller().Logger()
+		}).With().Timestamp().Logger()
 	}
 
 	// Set log level from env, default to info
