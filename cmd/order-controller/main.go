@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"se-take-home-assignment/common"
 	"se-take-home-assignment/internal/sim"
 
@@ -22,6 +23,8 @@ import (
 
 func main() {
 	common.InitLogging()
+	fmt.Println("McDonald's Order Management System - Simulation Results")
+	fmt.Println()
 	log.Info().Msgf("System initialized with 0 bots")
 	c := sim.NewController(1001)
 
@@ -39,4 +42,20 @@ func main() {
 	}
 
 	c.RemoveBot()
+	completed := c.CompleteOrder()
+	vipCount := 0
+	for _, o := range completed {
+		if o.IsVIP {
+			vipCount++
+		}
+	}
+	normalCount := len(completed) - vipCount
+
+	fmt.Println()
+	fmt.Println("Final Status:")
+	fmt.Printf("- Total Orders Processed: %d (%d VIP, %d Normal)\n", len(completed), vipCount,
+		normalCount)
+	fmt.Printf("- Orders Completed: %d\n", len(completed))
+	fmt.Printf("- Active Bots: %d\n", len(c.Bots()))
+	fmt.Printf("- Pending Orders: %d\n", len(c.PendingOrders()))
 }

@@ -109,3 +109,7 @@ func (o Order) OrderType() string {
 	}
 	return "Normal"
 }
+
+func (c *Controller) Bots() []Bot {
+	return c.bots
+}

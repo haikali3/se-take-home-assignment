@@ -35,12 +35,14 @@ func (c *Controller) RemoveBot() {
 	// remove the newest bot on last position
 	newestBot := c.bots[len(c.bots)-1]
 	c.bots = c.bots[:len(c.bots)-1]
-	log.Info().Msgf("Bot #%d destroyed", newestBot.ID)
 
 	// if the bot is processing an order, put it back to pending
 	if newestBot.Current != nil {
 		// prepend back to front of pending (VIP priority still applies)
+		log.Info().Msgf("Bot #%d destroyed while PROCESSING", newestBot.ID)
 		c.pending = append([]Order{*newestBot.Current}, c.pending...)
+	} else {
+		log.Info().Msgf("Bot #%d destroyed while IDLE", newestBot.ID)
 	}
 }
 
@@ -51,9 +53,8 @@ func (c *Controller) Tick() {
 	for i := range c.bots {
 		bot := &c.bots[i]
 		if bot.Current != nil && !c.now.Before(bot.BusyEnd) { // if current bot is busy and the time has reached or passed the BusyEnd
-			// order is complete
 			bot.Current.Status = "COMPLETE"
-			log.Info().Msgf("Bot #%d completed %s Order #%d - Status: %s", bot.ID, bot.Current.OrderType(), bot.Current.ID, bot.Current.Status)
+			log.Info().Msgf("Bot #%d completed %s Order #%d - Status: %s (Processing time: 10s)", bot.ID, bot.Current.OrderType(), bot.Current.ID, bot.Current.Status)
 			c.complete = append(c.complete, *bot.Current)
 			bot.Current = nil
 			justFinished[bot.ID] = true
