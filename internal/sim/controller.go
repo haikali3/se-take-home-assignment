@@ -82,3 +82,9 @@ func (c *Controller) PendingOrders() []Order {
 func (c *Controller) NextOrderID() int {
 	return c.nextOrderID
 }
+
+func (c *Controller) CompleteOrder() []Order {
+	out := make([]Order, len(c.complete))
+	copy(out, c.complete)
+	return out
+}

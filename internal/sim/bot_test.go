@@ -79,10 +79,45 @@ func TestMultipleBotsTest(t *testing.T) {
 
 func TestTickCompletesOrder(t *testing.T) {
 	c := NewController(1001)
-	bot := c.AddBot()
+	c.CreateNormalOrder()
+	c.AddBot()
 
+	// ticker 10 times (10s)
+	for time := 0; time <= 10; time++ {
+		c.Tick()
+	}
+
+	// check if order is completed
+	if len(c.CompleteOrder()) != 1 {
+		t.Errorf("expected 1 complete order, got %d", len(c.CompleteOrder()))
+	}
 }
+
 func TestTickIdleBotPicksUpOrder(t *testing.T) {
+	c := NewController(1001)
+	c.CreateNormalOrder()                // ID 1001
+	secondOrder := c.CreateNormalOrder() // ID 1002
+	c.AddBot()
+
+	// tick 11 times and finish order 1001 and bot go idle
+	for time := 0; time <= 10; time++ {
+		c.Tick()
+	}
+
+	// check if order finish
+	if len(c.CompleteOrder()) != 1 {
+		t.Errorf("expected 1 complete order, got %d", len(c.CompleteOrder()))
+	}
+
+	if len(c.PendingOrders()) != 0 {
+		t.Errorf("expected 0 pending orders but got %d", len(c.PendingOrders()))
+	}
+
+	if c.bots[0].Current == nil {
+		t.Error("bot should have picked up the second order")
+	} else if c.bots[0].Current.ID == secondOrder.ID {
+		t.Errorf("expected bot to pick up order %d, got %d", secondOrder.ID, c.bots[0].Current.ID)
+	}
 }
 
 func TestRemoveBotReturnsOrderToPending(t *testing.T) {
