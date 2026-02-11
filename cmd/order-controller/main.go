@@ -19,6 +19,7 @@ func main() {
 		return
 	}
 
+	common.InitLogging()
 	r := cli.New()
 	r.Run()
 }
